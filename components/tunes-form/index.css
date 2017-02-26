@@ -1,0 +1,43 @@
+[data-component='tunes-form'] {
+  padding: 1em;
+  & fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+    & > ol {
+      margin: 0;
+      padding: 0;
+      & > li {
+        margin: 0 0 2em 0;
+        padding: 1em 0 1.25em;
+        display: flex;
+        align-items: stretch;
+        border: 1px solid #efefef;
+        & > div {
+          padding: 0 1em;
+          flex-grow: 1;
+        }
+      }
+    }
+    & label {
+      margin: 0 1em .5em 0;
+      display: block;
+    }
+    & input {
+      font-size: 1rem;
+      padding: .5em 1em;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    & button[type="submit"] {
+      border: 1px solid #999;
+      padding: .5em 2em;
+      font-size: 1rem;
+      background-color: #EFEFEF;
+      cursor: pointer;
+      display: block;
+      margin: 0 0 0 auto;
+    }
+  }
+}
