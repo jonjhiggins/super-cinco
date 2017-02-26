@@ -1,10 +1,15 @@
 {
+  "name": "super-cinco",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "clean": "rimraf bundle",
     "prebuild": "yarn run clean",
     "build": "webpack --progress",
     "build:watch": "yarn run build -- --watch",
+    "init": "node tasks/create-db.js",
     "lint:js": "eslint .",
     "lint:js:fix": "yarn run lint:js -- --fix",
     "lint:css": "stylelint '**/*.css'",
@@ -14,6 +19,7 @@
     "babel-runtime": "^6.20.0",
     "dom4": "^1.8.3",
     "domready": "^1.0.8",
+    "nano": "^6.2.0",
     "svgxuse": "^1.1.23",
     "whatwg-fetch": "^2.0.1"
   },
@@ -77,5 +83,8 @@
   },
   "stylelint": {
     "extends": "stylelint-config-barebones"
+  },
+  "peerDependencies": {
+    "chalk": "^1.1.3"
   }
 }
