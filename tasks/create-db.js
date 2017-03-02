@@ -10,7 +10,12 @@ var nano = require('nano')('http://localhost:5984')
  */
 var init = function () {
   // Authoise admin user to create DB
-  nano.auth(config.username, config.password, authUser)
+  if (!config.username || !config.password) {
+    console.log(errorTheme('Missing username or password in ./config.json'))
+    return
+  } else {
+    nano.auth(config.username, config.password, authUser)
+  }
 }
 
 /**
