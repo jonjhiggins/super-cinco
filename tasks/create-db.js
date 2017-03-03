@@ -29,25 +29,29 @@ var init = function () {
 var authUser = function (err, body, headers) {
   if (err) {
     console.log(errorTheme(err))
+    return
   }
   nano = require('nano')({
     url: 'http://localhost:5984',
     cookie: headers['set-cookie']
   })
-  return nano.db.create('super-cinco', createDb)
+
+  nano.db.create('_users', createDb.bind(null, '_users'))
+  return nano.db.create('super-cinco', createDb.bind(null, 'super-cinco'))
 }
 
 /**
  * Create the CouchDB database for app
  * @function createDb
+ * @param {string} name - db name
  * @param {object} err - the error, if any
  * @param {object} body - the http response body from couchdb, if no error. json parsed body, binary for non json responses
  */
-var createDb = function (err, body) {
+var createDb = function (name, err, body) {
   if (err) {
-    console.log(errorTheme(err))
+    console.log(errorTheme(name + ': ' + err))
   } else {
-    console.log(successTheme('super-cinco database created'))
+    console.log(successTheme(name + ' database created'))
   }
 }
 
