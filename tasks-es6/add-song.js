@@ -1,16 +1,16 @@
 /* eslint no-console: 0 */
 
-var nano = require('./nano-connect')
-var chalk = require('chalk')
-var errorTheme = chalk.bold.red
-var successTheme = chalk.bold.green
-var Q = require('q')
+const nano = require('./nano-connect')
+const chalk = require('chalk')
+const errorTheme = chalk.bold.red
+const successTheme = chalk.bold.green
+const Q = require('q')
 
 /**
  * Add a song to the songs database
  * @function init
  */
-var init = function () {
+const init = function () {
   nano()
     .then(getUuids)
     .then(insertSong)
@@ -32,8 +32,8 @@ var init = function () {
  * @param {object} nano - nano/couchDB instance
  * @returns {object|string} resolved: object containing uuids and nano instance / rejected: error message
  */
-var getUuids = function (nano) {
-  var deferred = Q.defer()
+const getUuids = function (nano) {
+  const deferred = Q.defer()
   nano.uuids(1, function (err, body) {
     if (err) {
       deferred.reject(err)
@@ -50,12 +50,12 @@ var getUuids = function (nano) {
  * @param {object} resolved - object containing uuids and nano instance
  * @returns {string} resolved/rejected message
  */
-var insertSong = function (resolved) {
-  var deferred = Q.defer()
-  var nano = resolved.nano
-  var uuid = resolved.uuids[0]
-  var songsDb = nano.use('super-cinco-songs')
-  var doc = {
+const insertSong = function (resolved) {
+  const deferred = Q.defer()
+  const nano = resolved.nano
+  const uuid = resolved.uuids[0]
+  const songsDb = nano.use('super-cinco-songs')
+  const doc = {
     '_id': uuid,
     'artist': 'Test Artist',
     'song': 'Test Song'

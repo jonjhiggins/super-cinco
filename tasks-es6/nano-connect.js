@@ -1,23 +1,23 @@
 /* eslint no-console: 0 */
-var config = require('../config.json')
-var nano = require('nano')('http://localhost:5984')
-var Q = require('q')
+const config = require('../config.json')
+const nano = require('nano')('http://localhost:5984')
+const Q = require('q')
 
 /**
  * Initialise the module
  * @function init
  * @returns {promise|string} resolved returns authenticated nano instance, rejected returns error string
  */
-var init = function () {
-  var deferred = Q.defer()
+const init = function () {
+  const deferred = Q.defer()
   // Authorise admin user to connect to CouchDB
   if (!config.username || !config.password) {
     deferred.reject('Missing username or password in ./config.json')
   } else {
     authUser()
       .then(storeCookie)
-      .then(function (nano) {
-        deferred.resolve(nano)
+      .then(function (nanoInstance) {
+        deferred.resolve(nanoInstance)
       })
       .catch(function (err) {
         deferred.reject(err)
@@ -29,15 +29,15 @@ var init = function () {
 /**
  * Authenticate admin user
  * @function authUser
- * @returns {promise|string} returns the body object if resolved, or error string if rejected
+ * @returns {promise|string} resolved: headers + nano instance / rejected: error message
  */
-var authUser = function () {
-  var deferred = Q.defer()
+const authUser = function () {
+  const deferred = Q.defer()
   nano.auth(config.username, config.password, function (err, body, headers) {
     if (err) {
       deferred.reject(err)
     } else {
-      deferred.resolve(headers)
+      deferred.resolve({headers: headers, nanoInstance: nano})
     }
   })
   return deferred.promise
@@ -47,14 +47,15 @@ var authUser = function () {
  * Persist the authentication
  * @function storeCookie
  * @param {object} headers - http headers from nano.auth in authUser
+ * @param {object} nanoInstance - nano/couchDB instance
  * @returns {object} authenticated nano/couchDB instance
  */
-var storeCookie = function (headers) {
-  nano = require('nano')({
+const storeCookie = function ({headers, nanoInstance}) {
+  nanoInstance = require('nano')({
     url: 'http://localhost:5984',
     cookie: headers['set-cookie']
   })
-  return nano
+  return nanoInstance
 }
 
 module.exports = init
