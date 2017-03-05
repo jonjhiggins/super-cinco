@@ -1,8 +1,10 @@
+/* eslint no-console: 0 */
 var config = require('../config.json')
 var chalk = require('chalk')
 var errorTheme = chalk.bold.red
 var successTheme = chalk.bold.green
 var nano = require('nano')('http://localhost:5984')
+var Q = require('q')
 
 /**
  * Initialise the module
@@ -14,45 +16,79 @@ var init = function () {
     console.log(errorTheme('Missing username or password in ./config.json'))
     return
   } else {
-    nano.auth(config.username, config.password, authUser)
+    authUser()
+      .then(storeCookie)
+      .then(createDbs)
+      .catch(function (err) {
+        console.log(errorTheme(err))
+      })
   }
 }
 
 /**
- * Create the CouchDB database for app
- * @function createDb
+ * Authenticate admin user
+ * @function authUser
  * @param {object} err - the error, if any
  * @param {object} body - the http response body from couchdb, if no error. json parsed body, binary for non json responses
- * @param {object} headers
- * @returns {function}
+ * @param {object} headers - http headers
+ * @returns {promise|string} returns the body object if resolved, or error string if rejected
  */
-var authUser = function (err, body, headers) {
-  if (err) {
-    console.log(errorTheme(err))
-    return
-  }
+var authUser = function () {
+  var deferred = Q.defer()
+  nano.auth(config.username, config.password, function (err, body, headers) {
+    if (err) {
+      deferred.reject(err)
+    } else {
+      deferred.resolve(headers)
+    }
+  })
+  return deferred.promise
+}
+
+/**
+ * Persist the authentication
+ * @function storeCookie
+ * @param {object} headers - http headers from nano.auth in authUser
+ */
+var storeCookie = function (headers) {
   nano = require('nano')({
     url: 'http://localhost:5984',
     cookie: headers['set-cookie']
   })
-
-  nano.db.create('_users', createDb.bind(null, '_users'))
-  return nano.db.create('super-cinco', createDb.bind(null, 'super-cinco'))
+  return
 }
 
 /**
- * Create the CouchDB database for app
+ * Create the CouchDB databases requried for app
  * @function createDb
- * @param {string} name - db name
- * @param {object} err - the error, if any
- * @param {object} body - the http response body from couchdb, if no error. json parsed body, binary for non json responses
+ * @returns {promise|string} returns the body object if resolved, or error string if rejected
  */
-var createDb = function (name, err, body) {
-  if (err) {
-    console.log(errorTheme(name + ': ' + err))
-  } else {
-    console.log(successTheme(name + ' database created'))
-  }
+var createDbs = function () {
+  createDb('_users').fail(function (err) {
+    console.log(errorTheme(err))
+  })
+  createDb('super-cinco').fail(function (err) {
+    console.log(errorTheme(err))
+  })
+}
+
+/**
+ * Create a CouchDB database with supplied name
+ * @function createDb
+ * @param {string} dbName - database name to create
+ * @returns {promise|string} returns the body object if resolved, or error string if rejected
+ */
+var createDb = function (dbName) {
+  var deferred = Q.defer()
+  nano.db.create(dbName, function (err, body) {
+    if (err) {
+      deferred.reject(err + ' (' + dbName + ')')
+    } else {
+      console.log(successTheme(dbName + ' database created'))
+      deferred.resolve(body)
+    }
+  })
+  return deferred.promise
 }
 
 init()
