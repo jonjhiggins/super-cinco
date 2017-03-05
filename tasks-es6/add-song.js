@@ -70,4 +70,4 @@ var insertSong = function (resolved) {
   return deferred.promise
 }
 
-init()
+module.exports = init
