@@ -10,7 +10,7 @@
     "build": "webpack --progress",
     "build:watch": "yarn run build -- --watch",
     "initDb": "node tasks/create-db.js",
-    "initUser": "node tasks/create-user.js",
+    "addSong": "node tasks/add-song.js",
     "lint:js": "eslint .",
     "lint:js:fix": "yarn run lint:js -- --fix",
     "lint:css": "stylelint '**/*.css'",
@@ -20,7 +20,7 @@
     "babel-runtime": "^6.20.0",
     "dom4": "^1.8.3",
     "domready": "^1.0.8",
-    "nano": "^6.2.0",
+    "nano": "apache/couchdb-nano",
     "svgxuse": "^1.1.23",
     "whatwg-fetch": "^2.0.1"
   },

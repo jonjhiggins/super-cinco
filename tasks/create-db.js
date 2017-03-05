@@ -6,7 +6,6 @@ var successTheme = chalk.bold.green
 var nanoConnect = require('./nano-connect')
 var Q = require('q')
 var dbs = [
-  '_users',
   'super-cinco-songs'
 ]
 
