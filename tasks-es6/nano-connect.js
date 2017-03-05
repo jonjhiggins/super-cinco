@@ -9,21 +9,25 @@ const Q = require('q')
  * @returns {promise|string} resolved returns authenticated nano instance, rejected returns error string
  */
 const init = function () {
-  const deferred = Q.defer()
-  // Authorise admin user to connect to CouchDB
-  if (!config.username || !config.password) {
-    deferred.reject('Missing username or password in ./config.json')
-  } else {
-    authUser()
-      .then(storeCookie)
-      .then(function (nanoInstance) {
-        deferred.resolve(nanoInstance)
+  const p = new Promise((resolve, reject) => {
+    if (!config.username || !config.password) {
+      reject('Missing username or password in ./config.json')
+    } else {
+      const p2 = new Promise((resolve, reject) => {
+        authUser()
+          .then(storeCookie)
+          .then(function (nanoInstance) {
+            resolve(nanoInstance)
+          })
+          .catch(function (err) {
+            reject(err)
+          })
       })
-      .catch(function (err) {
-        deferred.reject(err)
-      })
-  }
-  return deferred.promise
+      resolve(p2)
+    }
+  })
+
+  return p
 }
 
 /**
