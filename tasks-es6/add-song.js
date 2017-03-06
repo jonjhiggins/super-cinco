@@ -1,29 +1,25 @@
 /* eslint no-console: 0 */
 
-const nano = require('./nano-connect')
+const nanoConnect = require('./nano-connect')
 const chalk = require('chalk')
 const errorTheme = chalk.bold.red
 const successTheme = chalk.bold.green
-const Q = require('q')
 
 /**
  * Add a song to the songs database
  * @function init
  */
 const init = function () {
-  nano()
-    .then(getUuids)
-    .then(insertSong)
-    .then(function (msg) {
-      if (msg) {
-        console.log(successTheme(msg))
-      } else {
-        console.log(errorTheme('Could not add song'))
-      }
-    })
-  .catch(function (err) {
-    console.log(errorTheme(err))
-  })
+  return nanoConnect()
+          .then(getUuids)
+          .then(insertSong)
+          .then(function (msg) {
+            if (msg) {
+              console.log(successTheme(msg))
+            } else {
+              console.log(errorTheme('Could not add song'))
+            }
+          })
 }
 
 /**
@@ -33,15 +29,16 @@ const init = function () {
  * @returns {object|string} resolved: object containing uuids and nano instance / rejected: error message
  */
 const getUuids = function (nano) {
-  const deferred = Q.defer()
-  nano.uuids(1, function (err, body) {
-    if (err) {
-      deferred.reject(err)
-    } else {
-      deferred.resolve({uuids: body.uuids, nano: nano})
-    }
+  const promise = new Promise((resolve, reject) => {
+    nano.uuids(1, (err, body) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve({uuids: body.uuids, nano: nano})
+      }
+    })
   })
-  return deferred.promise
+  return promise
 }
 
 /**
@@ -51,7 +48,6 @@ const getUuids = function (nano) {
  * @returns {string} resolved/rejected message
  */
 const insertSong = function (resolved) {
-  const deferred = Q.defer()
   const nano = resolved.nano
   const uuid = resolved.uuids[0]
   const songsDb = nano.use('super-cinco-songs')
@@ -60,14 +56,16 @@ const insertSong = function (resolved) {
     'artist': 'Test Artist',
     'song': 'Test Song'
   }
-  songsDb.insert(doc, function (err, body) {
-    if (err) {
-      deferred.reject(err)
-    } else {
-      deferred.resolve('"' + doc.artist + ' - ' + doc.song + '" successfully added')
-    }
+  const promise = new Promise((resolve, reject) => {
+    songsDb.insert(doc, (err, body) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve('"' + doc.artist + ' - ' + doc.song + '" successfully added')
+      }
+    })
   })
-  return deferred.promise
+  return promise
 }
 
 module.exports = init

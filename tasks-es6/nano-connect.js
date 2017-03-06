@@ -1,7 +1,6 @@
 /* eslint no-console: 0 */
 const config = require('../config.json')
 const nano = require('nano')('http://localhost:5984')
-const Q = require('q')
 
 /**
  * Initialise the module
@@ -9,25 +8,26 @@ const Q = require('q')
  * @returns {promise|string} resolved returns authenticated nano instance, rejected returns error string
  */
 const init = function () {
-  const p = new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     if (!config.username || !config.password) {
       reject('Missing username or password in ./config.json')
     } else {
-      const p2 = new Promise((resolve, reject) => {
+      authUser()
+      const promise2 = new Promise((resolve, reject) => {
         authUser()
           .then(storeCookie)
-          .then(function (nanoInstance) {
+          .then(nanoInstance => {
             resolve(nanoInstance)
           })
-          .catch(function (err) {
+          .catch(err => {
             reject(err)
           })
       })
-      resolve(p2)
+      resolve(promise2)
     }
   })
 
-  return p
+  return promise
 }
 
 /**
@@ -36,15 +36,16 @@ const init = function () {
  * @returns {promise|string} resolved: headers + nano instance / rejected: error message
  */
 const authUser = function () {
-  const deferred = Q.defer()
-  nano.auth(config.username, config.password, function (err, body, headers) {
-    if (err) {
-      deferred.reject(err)
-    } else {
-      deferred.resolve({headers: headers, nanoInstance: nano})
-    }
+  const promise = new Promise((resolve, reject) => {
+    nano.auth(config.username, config.password, (err, body, headers) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve({headers: headers, nanoInstance: nano})
+      }
+    })
   })
-  return deferred.promise
+  return promise
 }
 
 /**

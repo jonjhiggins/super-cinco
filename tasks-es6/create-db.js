@@ -1,9 +1,7 @@
 /* eslint no-console: 0 */
 const chalk = require('chalk')
-const errorTheme = chalk.bold.red
 const successTheme = chalk.bold.green
 const nanoConnect = require('./nano-connect')
-const Q = require('q')
 const dbs = [
   'super-cinco-songs'
 ]
@@ -15,11 +13,36 @@ const dbs = [
  * @function init
  */
 const init = function () {
-  nanoConnect()
-    .then(createDbs)
-    .catch(function (err) {
-      console.log(errorTheme(err))
+  return nanoConnect()
+          .then(getDbs)
+          .then(response => {
+            console.log(response.body)
+            // If a database in the reponse exists in "dbs" array
+            // remove it - it's already been created
+            return response.nano
+          })
+          .then(createDbs)
+          .then(msg => {
+            console.log(successTheme(msg))
+          })
+}
+
+/**
+ * Get a list of current databases in CouchDB
+ * @function createDb
+ * @param {object} nano - nano/couchDB instance to create database on
+ */
+const getDbs = function (nano) {
+  const promise = new Promise((resolve, reject) => {
+    nano.db.list((err, body) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve({nano, body})
+      }
     })
+  })
+  return promise
 }
 
 /**
@@ -28,15 +51,19 @@ const init = function () {
  * @param {object} nano - nano/couchDB instance to create database on
  */
 const createDbs = function (nano) {
+  const promises = []
   for (let i = 0; i < dbs.length; i++) {
-    createDb(nano, dbs[i])
-      .then(function (msg) {
-        console.log(successTheme(msg))
-      })
-      .fail(function (err) {
-        console.log(errorTheme(err))
-      })
+    promises[i] = new Promise((resolve, reject) => {
+      createDb(nano, dbs[i])
+        .then(msg => {
+          resolve(msg)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
   }
+  return Promise.all(promises)
 }
 
 /**
@@ -47,19 +74,20 @@ const createDbs = function (nano) {
  * @returns {promise|string} returns the body object if resolved, or error string if rejected
  */
 const createDb = function (nano, dbName) {
-  const deferred = Q.defer()
-  nano.db.create(dbName, function (err, body) {
-    if (err) {
-      deferred.reject(err + ' (' + dbName + ')')
-    } else {
-      if (body.ok) {
-        deferred.resolve(dbName + ' database created')
+  const promise = new Promise((resolve, reject) => {
+    nano.db.create(dbName, (err, body) => {
+      if (err) {
+        reject(err + ' (' + dbName + ')')
       } else {
-        deferred.reject(dbName + ' database not created')
+        if (body.ok) {
+          resolve(dbName + ' database created')
+        } else {
+          reject(dbName + ' database not created')
+        }
       }
-    }
+    })
   })
-  return deferred.promise
+  return promise
 }
 
 module.exports = init
