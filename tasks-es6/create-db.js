@@ -1,8 +1,7 @@
 /* eslint no-console: 0 */
-const chalk = require('chalk')
-const successTheme = chalk.bold.green
 const nanoConnect = require('./nano-connect')
-const dbsToCreate = [
+const dbsRequired = [
+  'super-cinco-songs',
   'super-cinco-songs'
 ]
 
@@ -11,18 +10,16 @@ const dbsToCreate = [
 /**
  * Initialise the module
  * @function init
+ * @returns {string} message detailing which databases created
  */
 const init = function () {
   return nanoConnect()
           .then(getDbs)
           .then(({nano, body: existingDbs}) => {
-            checkIfCreateDb(existingDbs)
-            return nano
+            const dbsToCreate = checkIfCreateDb(existingDbs)
+            return {nano: nano, dbsToCreate: dbsToCreate}
           })
           .then(createDbs)
-          .then(msg => {
-            console.log(successTheme(msg))
-          })
 }
 
 /**
@@ -45,26 +42,28 @@ const getDbs = function (nano) {
 }
 
 /**
- * Create the CouchDB databases requried for app
+ * Check which DBs already exist and remove them from dbsRequired
  * @function checkIfCreateDb
  * @param {array} existingDbs - list of databases in CouchDB
+ * @returns {array} filtered list of DBs
  */
 const checkIfCreateDb = function (existingDbs) {
-  for (let [index, value] of dbsToCreate.entries()) {
-    if (existingDbs.includes(value)) {
-      console.log(index)
-    }
-  }
+  return dbsRequired.filter(value => !existingDbs.includes(value))
 }
 
 /**
  * Create the CouchDB databases requried for app
  * @function createDb
  * @param {object} nano - nano/couchDB instance to create database on
+ * @param {array} dbsToCreate - which databases need to be created
  * @returns {promise|string} from createDb
  */
-const createDbs = function (nano) {
-  return createDb(nano, dbsToCreate[0])
+const createDbs = function ({nano, dbsToCreate}) {
+  if (dbsToCreate.length) {
+    return createDb(nano, dbsToCreate[0])
+  } else {
+    return 'All databases already exist'
+  }
 }
 
 /**
