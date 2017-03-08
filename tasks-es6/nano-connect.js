@@ -12,7 +12,6 @@ const init = function () {
     if (!config.username || !config.password) {
       reject('Missing username or password in ./config.json')
     } else {
-      authUser()
       const promise2 = new Promise((resolve, reject) => {
         authUser()
           .then(storeCookie)

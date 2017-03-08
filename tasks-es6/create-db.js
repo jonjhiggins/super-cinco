@@ -2,7 +2,7 @@
 const chalk = require('chalk')
 const successTheme = chalk.bold.green
 const nanoConnect = require('./nano-connect')
-const dbs = [
+const dbsToCreate = [
   'super-cinco-songs'
 ]
 
@@ -15,11 +15,9 @@ const dbs = [
 const init = function () {
   return nanoConnect()
           .then(getDbs)
-          .then(response => {
-            console.log(response.body)
-            // If a database in the reponse exists in "dbs" array
-            // remove it - it's already been created
-            return response.nano
+          .then(({nano, body: existingDbs}) => {
+            checkIfCreateDb(existingDbs)
+            return nano
           })
           .then(createDbs)
           .then(msg => {
@@ -31,6 +29,7 @@ const init = function () {
  * Get a list of current databases in CouchDB
  * @function createDb
  * @param {object} nano - nano/couchDB instance to create database on
+ * @returns {promise|string} resolved: authenticated nano instance and response body, rejected: error string
  */
 const getDbs = function (nano) {
   const promise = new Promise((resolve, reject) => {
@@ -47,23 +46,25 @@ const getDbs = function (nano) {
 
 /**
  * Create the CouchDB databases requried for app
+ * @function checkIfCreateDb
+ * @param {array} existingDbs - list of databases in CouchDB
+ */
+const checkIfCreateDb = function (existingDbs) {
+  for (let [index, value] of dbsToCreate.entries()) {
+    if (existingDbs.includes(value)) {
+      console.log(index)
+    }
+  }
+}
+
+/**
+ * Create the CouchDB databases requried for app
  * @function createDb
  * @param {object} nano - nano/couchDB instance to create database on
+ * @returns {promise|string} from createDb
  */
 const createDbs = function (nano) {
-  const promises = []
-  for (let i = 0; i < dbs.length; i++) {
-    promises[i] = new Promise((resolve, reject) => {
-      createDb(nano, dbs[i])
-        .then(msg => {
-          resolve(msg)
-        })
-        .catch(err => {
-          reject(err)
-        })
-    })
-  }
-  return Promise.all(promises)
+  return createDb(nano, dbsToCreate[0])
 }
 
 /**
