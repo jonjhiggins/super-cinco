@@ -1,7 +1,6 @@
 /* eslint no-console: 0 */
 const nanoConnect = require('./nano-connect')
 const dbsRequired = [
-  'super-cinco-songs',
   'super-cinco-songs'
 ]
 
@@ -59,8 +58,12 @@ const checkIfCreateDb = function (existingDbs) {
  * @returns {promise|string} from createDb
  */
 const createDbs = function ({nano, dbsToCreate}) {
+  const promises = []
   if (dbsToCreate.length) {
-    return createDb(nano, dbsToCreate[0])
+    for (const db of dbsToCreate) {
+      promises.push(createDb(nano, db))
+    }
+    return Promise.all(promises)
   } else {
     return 'All databases already exist'
   }
