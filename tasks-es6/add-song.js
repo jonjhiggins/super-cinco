@@ -1,9 +1,6 @@
 /* eslint no-console: 0 */
 
 const nanoConnect = require('./nano-connect')
-const chalk = require('chalk')
-const errorTheme = chalk.bold.red
-const successTheme = chalk.bold.green
 
 /**
  * Add a song to the songs database
@@ -13,13 +10,6 @@ const init = function () {
   return nanoConnect()
           .then(getUuids)
           .then(insertSong)
-          .then(function (msg) {
-            if (msg) {
-              console.log(successTheme(msg))
-            } else {
-              console.log(errorTheme('Could not add song'))
-            }
-          })
 }
 
 /**
@@ -59,7 +49,7 @@ const insertSong = function (resolved) {
   const promise = new Promise((resolve, reject) => {
     songsDb.insert(doc, (err, body) => {
       if (err) {
-        reject(err)
+        reject('Could not add song: ' + err)
       } else {
         resolve('"' + doc.artist + ' - ' + doc.song + '" successfully added')
       }

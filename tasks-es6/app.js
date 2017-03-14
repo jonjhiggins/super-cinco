@@ -12,6 +12,9 @@ nanoConnect()
     console.log(successTheme(msg))
   })
   .then(addSong)
+  .then(msg => {
+    console.log(successTheme(msg))
+  })
   .catch(function (err) {
     console.log(errorTheme(err))
   })
