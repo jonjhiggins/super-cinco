@@ -5,7 +5,7 @@ const nano = require('nano')('http://localhost:5984')
 /**
  * Initialise the module
  * @function init
- * @returns {promise|string} resolved returns authenticated nano instance, rejected returns error string
+ * @returns {promise} resolved returns authenticated nano instance, rejected returns error string
  */
 const init = function () {
   const promise = new Promise((resolve, reject) => {

@@ -8,21 +8,36 @@ const nanoConnect = require('./nano-connect')
 
 /**
  * Add a song to the songs database
- * @returns {string} resolved/rejected message
+ * @function addSong
+ * @param {string} artist artist of song to add
+ * @param {string} song title of song to add
+ * @returns {promise} resolved/rejected string
  */
-module.exports = function () {
+const addSongToDb = function (artist, song) {
   return nanoConnect()
-          .then(createDb)
-          .then(msg => {
-            console.log(successTheme(msg))
-          })
-          .then(addSong)
-          .then(msg => {
-            console.log(successTheme(msg))
-            return msg
-          })
-          .catch(function (err) {
-            console.log(errorTheme(err))
-            return err
-          })
+           .then(nano => {
+             const promise = new Promise((resolve, reject) => {
+               createDb(nano)
+                 .then(msg => {
+                   console.log(successTheme(msg))
+                 })
+                 .then(addSong.bind(null, nano, artist, song))
+                 .then(msg => {
+                   console.log(successTheme(msg))
+                   resolve(msg)
+                 })
+                 .catch(function (err) {
+                   reject(err)
+                 })
+             })
+             return promise
+           })
+           .catch(function (err) {
+             console.log(errorTheme(err))
+             return err
+           })
+}
+
+module.exports = {
+  addSong: addSongToDb
 }

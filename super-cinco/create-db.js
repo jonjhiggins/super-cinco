@@ -1,5 +1,4 @@
 /* eslint no-console: 0 */
-const nanoConnect = require('./nano-connect')
 const dbsRequired = [
   'super-cinco-songs'
 ]
@@ -9,11 +8,11 @@ const dbsRequired = [
 /**
  * Initialise the module
  * @function init
+ * @param {object} nano - authenticated nano/couchDB instance
  * @returns {string} message detailing which databases created
  */
-const init = function () {
-  return nanoConnect()
-          .then(getDbs)
+const init = function (nano) {
+  return getDbs(nano)
           .then(({nano, body: existingDbs}) => {
             const dbsToCreate = checkIfCreateDb(existingDbs)
             return {nano: nano, dbsToCreate: dbsToCreate}
