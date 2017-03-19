@@ -6,15 +6,23 @@ const errorTheme = chalk.bold.red
 const successTheme = chalk.bold.green
 const nanoConnect = require('./nano-connect')
 
-nanoConnect()
-  .then(createDb)
-  .then(msg => {
-    console.log(successTheme(msg))
-  })
-  .then(addSong)
-  .then(msg => {
-    console.log(successTheme(msg))
-  })
-  .catch(function (err) {
-    console.log(errorTheme(err))
-  })
+/**
+ * Add a song to the songs database
+ * @returns {string} resolved/rejected message
+ */
+module.exports = function () {
+  return nanoConnect()
+          .then(createDb)
+          .then(msg => {
+            console.log(successTheme(msg))
+          })
+          .then(addSong)
+          .then(msg => {
+            console.log(successTheme(msg))
+            return msg
+          })
+          .catch(function (err) {
+            console.log(errorTheme(err))
+            return err
+          })
+}

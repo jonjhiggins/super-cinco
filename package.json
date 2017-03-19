@@ -14,7 +14,7 @@
     "lint:js": "eslint .",
     "lint:js:fix": "yarn run lint:js -- --fix",
     "lint:css": "stylelint '**/*.css'",
-    "start": "http-server -o"
+    "start": "nodemon index.js"
   },
   "dependencies": {
     "babel-runtime": "^6.20.0",
@@ -40,6 +40,7 @@
     "extract-text-webpack-plugin": "^2.0.0-beta.5",
     "http-server": "^0.9.0",
     "imports-loader": "^0.7.0",
+    "nodemon": "^1.11.0",
     "postcss-cssnext": "^2.9.0",
     "postcss-import": "^9.1.0",
     "postcss-loader": "^1.2.2",
