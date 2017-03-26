@@ -22,7 +22,7 @@
     "dom4": "^1.8.3",
     "domready": "^1.0.8",
     "express": "^4.15.2",
-    "nano": "apache/couchdb-nano",
+    "monk": "^4.0.0",
     "svgxuse": "^1.1.23",
     "whatwg-fetch": "^2.0.1"
   },
