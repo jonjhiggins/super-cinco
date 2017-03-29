@@ -15,27 +15,19 @@ const db = monk('localhost:27017/super-cinco')
  * @returns {promise} resolved/rejected string
  */
 const addSongToDb = function (artist, song) {
-  return db
-          .then(db => {
-            const promise = new Promise((resolve, reject) => {
-              addSong(db, artist, song)
-                .then(msg => {
-                  console.log(successTheme(msg))
-                  resolve(msg)
-                })
-                .catch(function (err) {
-                  reject(err)
-                })
-            })
-            return promise
-          })
-          .catch(function (err) {
-            console.log(errorTheme(err))
-            return err
-          })
+  const promise = new Promise((resolve, reject) => {
+    addSong(db, artist, song)
+      .then(msg => {
+        console.log(successTheme(msg))
+        resolve(msg)
+      })
+      .catch(function (err) {
+        console.log(errorTheme(err))
+        reject(err)
+      })
+  })
+  return promise
 }
-
-addSongToDb()
 
 module.exports = {
   addSong: addSongToDb
