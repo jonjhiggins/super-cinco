@@ -1,5 +1,3 @@
-/* eslint no-console: 0 */
-
 /**
  * Add a song to the songs database
  * @function init

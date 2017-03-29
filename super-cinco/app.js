@@ -12,17 +12,22 @@ const db = monk('localhost:27017/super-cinco')
  * @function addSong
  * @param {string} artist artist of song to add
  * @param {string} song title of song to add
+ * @param {boolean} verbose should it log out errors etc
  * @returns {promise} resolved/rejected string
  */
-const addSongToDb = function (artist, song) {
+const addSongToDb = function (artist, song, verbose = false) {
   const promise = new Promise((resolve, reject) => {
     addSong(db, artist, song)
       .then(msg => {
-        console.log(successTheme(msg))
+        if (verbose) {
+          console.log(successTheme(msg))
+        }
         resolve(msg)
       })
       .catch(function (err) {
-        console.log(errorTheme(err))
+        if (verbose) {
+          console.log(errorTheme(err))
+        }
         reject(err)
       })
   })
