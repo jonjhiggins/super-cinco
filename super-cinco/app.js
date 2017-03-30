@@ -5,17 +5,31 @@ const chalk = require('chalk')
 const errorTheme = chalk.bold.red
 const successTheme = chalk.bold.green
 const monk = require('monk')
-const db = monk('localhost:27017/super-cinco')
+
+/**
+ * Prepare DB connection
+ * @function prepareDb
+ * @param {string} username db username
+ * @param {string} password db password
+ * @returns {object} monk/mongodb DB object
+ */
+const prepareDb = function (username, password) {
+  const url = username + ':' + encodeURIComponent(password) + '@localhost:27017/super-cinco'
+  const db = monk(url)
+  return db
+}
 
 /**
  * Add a song to the songs database
  * @function addSong
+ * @param {object} config object containing username and password
  * @param {string} artist artist of song to add
  * @param {string} song title of song to add
  * @param {boolean} verbose should it log out errors etc
  * @returns {promise} resolved/rejected string
  */
-const addSongToDb = function (artist, song, verbose = false) {
+const addSongToDb = function (config, artist, song, verbose = false) {
+  const db = prepareDb(config.username, config.password)
   const promise = new Promise((resolve, reject) => {
     addSong(db, artist, song)
       .then(msg => {

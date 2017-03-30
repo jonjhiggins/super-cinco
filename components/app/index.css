@@ -1,4 +1,5 @@
-@import '../tunes-form';
+@import '../notification';
+@import '../songs-form';
 
 html {
   text-size-adjust: 100%;

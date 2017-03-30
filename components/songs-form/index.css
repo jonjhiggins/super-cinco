@@ -1,4 +1,4 @@
-[data-component='tunes-form'] {
+[data-component='songs-form'] {
   padding: 1em;
   & fieldset {
     border: none;
