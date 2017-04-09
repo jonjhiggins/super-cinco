@@ -1,6 +1,14 @@
+# package directories
 node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+
+# MongoDB directories
+/data
+
 npm-debug.log
 .DS_Store
 /bundle
 config.json
-/data
