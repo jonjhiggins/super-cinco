@@ -24,9 +24,18 @@ export default class SongsForm {
    */
   submit (e) {
     e.preventDefault()
-    fetch('/add-song', {
+    const url = this.form.getAttribute('action')
+    const requestBody = JSON.stringify({
+      'artist-1': this.form.querySelector('[name="artist-1"]').value,
+      'song-1': this.form.querySelector('[name="song-1"]').value
+    })
+    fetch(url, {
       method: 'POST',
-      body: new FormData(this.form)
+      body: requestBody,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
     })
       .then(response => response.json())
       .then(response => {
