@@ -29,23 +29,20 @@ const prepareDb = function (username, password) {
  * @returns {promise} resolved/rejected string
  */
 const addSongToDb = function (config, artist, song, verbose = false) {
-  const db = prepareDb(config.username, config.password)
-  const promise = new Promise((resolve, reject) => {
-    addSong(db, artist, song)
-      .then(msg => {
-        if (verbose) {
-          console.log(successTheme(msg))
-        }
-        resolve(msg)
-      })
-      .catch(function (err) {
-        if (verbose) {
-          console.log(errorTheme(err))
-        }
-        reject(err)
-      })
-  })
-  return promise
+  return prepareDb(config.username, config.password)
+          .then(addSong.bind(null, artist, song))
+          .then(msg => {
+            if (verbose) {
+              console.log(successTheme(msg))
+            }
+            return msg
+          })
+          .catch(function (err) {
+            if (verbose) {
+              console.log(errorTheme(err))
+            }
+            throw err
+          })
 }
 
 module.exports = {

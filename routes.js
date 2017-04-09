@@ -12,7 +12,6 @@ router.get('/', (req, res) => {
 router.post('/add-song', (req, res) => {
   const artist1 = req.body['artist-1']
   const song1 = req.body['song-1']
-  console.log(req)
   superCinco.addSong(req.app.superCinco.config, artist1, song1)
     .then(msg => {
       res.json({msg: msg})

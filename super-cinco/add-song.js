@@ -1,12 +1,12 @@
 /**
  * Add a song to the songs database
  * @function init
- * @param {object} db - authenticated database instance
  * @param {string} artist artist of song to add
  * @param {string} song title of song to add
+ * @param {object} db - authenticated database instance
  * @returns {promise} resolved/rejected string
  */
-const init = function (db, artist, song) {
+const init = function (artist, song, db) {
   return insertSong(db, artist, song)
 }
 
