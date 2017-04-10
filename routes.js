@@ -18,7 +18,7 @@ router.post('/add-song', (req, res) => {
     })
     .catch(err => {
       console.log(errorTheme(err))
-      res.sendFile(path.join(__dirname, '/index.html'))
+      res.json({msg: err.name + ': ' + err.message})
     })
 })
 

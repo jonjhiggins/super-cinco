@@ -12,3 +12,4 @@ npm-debug.log
 .DS_Store
 /bundle
 config.json
+.env

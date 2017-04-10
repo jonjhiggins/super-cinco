@@ -2,10 +2,12 @@ const express = require('express')
 const app = express()
 const routes = require('./routes')
 const bodyParser = require('body-parser')
-const config = require('./config')
+const config = require('dotenv').config()
+
+console.log(config)
 
 app.superCinco = {
-  config: config
+  config: config.parsed
 }
 
 app.use(bodyParser.json()) // to support JSON-encoded bodies

@@ -14,14 +14,14 @@
     "lint:js": "eslint .",
     "lint:js:fix": "yarn run lint:js -- --fix",
     "lint:css": "stylelint '**/*.css'",
-    "start": "mongod --auth  --dbpath data | nodemon index.js"
-
+    "start": "NODE_ENV=local mongod --auth  --dbpath data | nodemon index.js"
   },
   "dependencies": {
     "babel-runtime": "^6.20.0",
     "body-parser": "^1.17.1",
     "dom4": "^1.8.3",
     "domready": "^1.0.8",
+    "dotenv": "^4.0.0",
     "express": "^4.15.2",
     "monk": "^4.0.0",
     "svgxuse": "^1.1.23",

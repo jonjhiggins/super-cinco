@@ -1,4 +1,18 @@
 {
-  "username": "super-cinco",
-  "password": "^5gW8Pxx\\j>@DX$Z"
+  "db": {
+    "local": {
+      "url": "",
+      "username": "",
+      "password": ""
+    },
+    "dev": {
+      "url": "",
+      "username": "",
+      "password": "",
+      "options": {
+        "ssl": true,
+        "authSource": "admin"
+      }
+    }
+  }
 }
