@@ -6,7 +6,10 @@
   "private": true,
   "scripts": {
     "clean": "rimraf bundle",
-    "db": "mongod --auth  --dbpath data",
+    "db:start": "mongod --auth  --dbpath data",
+    "db:shell": "mongo $(NODE_ENV=local node lib/db-shell.js)",
+    "db:shell:local": "yarn db:shell",
+    "db:shell:dev": "mongo $(NODE_ENV=dev node lib/db-shell.js)",
     "prebuild": "yarn run clean",
     "build": "webpack --progress",
     "build:watch": "yarn run build -- --watch",
@@ -14,8 +17,9 @@
     "lint:js:fix": "yarn run lint:js -- --fix",
     "lint:css": "stylelint '**/*.css'",
     "serve": "nodemon index.js",
-    "start": "yarn db | NODE_ENV=local yarn serve",
-    "startDev": "yarn db | NODE_ENV=dev yarn serve"
+    "start": "yarn db:start & NODE_ENV=local yarn serve",
+    "start:local": "yarn start",
+    "start:dev": "yarn db:start & NODE_ENV=dev yarn serve"
   },
   "dependencies": {
     "babel-runtime": "^6.20.0",

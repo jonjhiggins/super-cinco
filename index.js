@@ -3,16 +3,11 @@ const app = express()
 const routes = require('./routes')
 const bodyParser = require('body-parser')
 const config = require('dotenv').config()
+const buildConfig = require('./lib/build-config')
 const dbType = process.env.NODE_ENV.toUpperCase()
 
 app.superCinco = {
-  config: {
-    DB_HOST: config.parsed['DB_' + dbType + '_HOST'],
-    DB_USER: config.parsed['DB_' + dbType + '_USER'],
-    DB_PASS: config.parsed['DB_' + dbType + '_PASS'],
-    DB_SSL: config.parsed['DB_' + dbType + '_SSL'] === 'true',
-    DB_AUTH_SOURCE: config.parsed['DB_' + dbType + '_AUTH_SOURCE']
-  }
+  config: buildConfig(config.parsed, dbType)
 }
 
 app.use(bodyParser.json()) // to support JSON-encoded bodies
